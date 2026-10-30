@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -223,4 +225,42 @@ fun Avatar(name: String?, size: Dp = 40.dp) {
             Icon(Icons.Rounded.Person, null, tint = c.textSecondary)
         }
     }
+}
+
+/**
+ * Liste en verre affichée paresseusement : chaque ligne est un élément de la LazyColumn,
+ * les premier et dernier segments portent les coins arrondis de la carte.
+ * Indispensable pour les longues listes (contacts, historique) : une carte unique
+ * contenant toutes les lignes bloque l'interface et peut faire planter l'application.
+ */
+fun <T> LazyListScope.glassItems(
+    items: List<T>,
+    key: (T) -> Any,
+    row: @Composable (T) -> Unit,
+) {
+    itemsIndexed(items, key = { _, item -> key(item) }) { index, item ->
+        GlassSegment(first = index == 0, last = index == items.lastIndex) {
+            row(item)
+            if (index < items.lastIndex) GlassDivider()
+        }
+    }
+}
+
+@Composable
+private fun GlassSegment(first: Boolean, last: Boolean, content: @Composable ColumnScope.() -> Unit) {
+    val c = Glass.colors
+    val r = 24.dp
+    val shape = RoundedCornerShape(
+        topStart = if (first) r else 0.dp, topEnd = if (first) r else 0.dp,
+        bottomStart = if (last) r else 0.dp, bottomEnd = if (last) r else 0.dp,
+    )
+    Column(
+        Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .clip(shape)
+            .background(Brush.verticalGradient(listOf(c.glassFillTop, c.glassFillTop.copy(alpha = c.glassFillTop.alpha * 0.9f))))
+            .padding(top = if (first) 6.dp else 0.dp, bottom = if (last) 6.dp else 0.dp),
+        content = content,
+    )
 }

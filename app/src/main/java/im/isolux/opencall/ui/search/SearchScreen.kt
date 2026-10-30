@@ -33,8 +33,7 @@ import im.isolux.opencall.data.CallLogEntry
 import im.isolux.opencall.data.Contact
 import im.isolux.opencall.ui.components.Avatar
 import im.isolux.opencall.ui.components.EmptyState
-import im.isolux.opencall.ui.components.GlassCard
-import im.isolux.opencall.ui.components.GlassDivider
+import im.isolux.opencall.ui.components.glassItems
 import im.isolux.opencall.ui.components.ScreenTitle
 import im.isolux.opencall.ui.components.SectionHeader
 import im.isolux.opencall.ui.components.glassSurface
@@ -86,24 +85,14 @@ fun SearchScreen(
         }
         if (contactHits.isNotEmpty()) {
             item { SectionHeader("Contacts") }
-            item {
-                GlassCard(Modifier.padding(horizontal = 16.dp)) {
-                    contactHits.forEachIndexed { i, contact ->
-                        ResultRow(contact.name, contact.phones.firstOrNull()?.number?.let { PhoneNumbers.format(it) }) { selected = contact }
-                        if (i < contactHits.lastIndex) GlassDivider()
-                    }
-                }
+            glassItems(contactHits, key = { "c${it.id}" }) { contact ->
+                ResultRow(contact.name, contact.phones.firstOrNull()?.number?.let { PhoneNumbers.format(it) }) { selected = contact }
             }
         }
         if (callHits.isNotEmpty()) {
             item { SectionHeader("Historique") }
-            item {
-                GlassCard(Modifier.padding(horizontal = 16.dp)) {
-                    callHits.forEachIndexed { i, e ->
-                        ResultRow(e.name ?: PhoneNumbers.format(e.number), if (e.name != null) PhoneNumbers.format(e.number) else null) { onCall(e.number) }
-                        if (i < callHits.lastIndex) GlassDivider()
-                    }
-                }
+            glassItems(callHits, key = { "h${it.id}" }) { e ->
+                ResultRow(e.name ?: PhoneNumbers.format(e.number), if (e.name != null) PhoneNumbers.format(e.number) else null) { onCall(e.number) }
             }
         }
     }

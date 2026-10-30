@@ -42,6 +42,7 @@ import im.isolux.opencall.ui.components.GlassDivider
 import im.isolux.opencall.ui.components.PermissionCard
 import im.isolux.opencall.ui.components.ScreenTitle
 import im.isolux.opencall.ui.components.SectionHeader
+import im.isolux.opencall.ui.components.glassItems
 import im.isolux.opencall.ui.theme.Glass
 
 @Composable
@@ -92,21 +93,16 @@ fun ContactsScreen(
         if (contacts.isEmpty()) {
             item { EmptyState("Aucun contact avec numéro de téléphone.") }
         } else {
-            item {
-                GlassCard(Modifier.padding(horizontal = 16.dp)) {
-                    contacts.forEachIndexed { i, contact ->
-                        Row(
-                            Modifier.fillMaxWidth().clickable { selected = contact }.padding(horizontal = 12.dp, vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Avatar(contact.name)
-                            Spacer(Modifier.width(12.dp))
-                            Text(contact.name, color = Glass.colors.textPrimary, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            if (contact.phones.any { isBlocked(it.number) }) {
-                                Icon(Icons.Rounded.Block, "Bloqué", tint = Glass.colors.callRed)
-                            }
-                        }
-                        if (i < contacts.lastIndex) GlassDivider()
+            glassItems(contacts, key = { it.id }) { contact ->
+                Row(
+                    Modifier.fillMaxWidth().clickable { selected = contact }.padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Avatar(contact.name)
+                    Spacer(Modifier.width(12.dp))
+                    Text(contact.name, color = Glass.colors.textPrimary, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    if (contact.phones.any { isBlocked(it.number) }) {
+                        Icon(Icons.Rounded.Block, "Bloqué", tint = Glass.colors.callRed)
                     }
                 }
             }

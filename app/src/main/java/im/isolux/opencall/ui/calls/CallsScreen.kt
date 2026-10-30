@@ -40,8 +40,7 @@ import im.isolux.opencall.blocking.PhoneNumbers
 import im.isolux.opencall.data.CallLogEntry
 import im.isolux.opencall.ui.components.Avatar
 import im.isolux.opencall.ui.components.EmptyState
-import im.isolux.opencall.ui.components.GlassCard
-import im.isolux.opencall.ui.components.GlassDivider
+import im.isolux.opencall.ui.components.glassItems
 import im.isolux.opencall.ui.components.PermissionCard
 import im.isolux.opencall.ui.components.ScreenTitle
 import im.isolux.opencall.ui.theme.Glass
@@ -74,13 +73,8 @@ fun CallsScreen(
             item { EmptyState("Aucun appel récent.") }
             return@LazyColumn
         }
-        item {
-            GlassCard(Modifier.padding(horizontal = 16.dp)) {
-                entries.forEachIndexed { index, entry ->
-                    CallRow(entry, isBlocked(entry.number), onCall, onBlock, onUnblock)
-                    if (index < entries.lastIndex) GlassDivider()
-                }
-            }
+        glassItems(entries, key = { it.id }) { entry ->
+            CallRow(entry, isBlocked(entry.number), onCall, onBlock, onUnblock)
         }
     }
 }
