@@ -168,7 +168,7 @@ fun OpenCallRoot(pendingDial: String?, onDialConsumed: () -> Unit) {
 
 /** Barre d'onglets flottante en verre dépoli. */
 @Composable
-private fun GlassTabBar(selected: Tab, onSelect: (Tab) -> Unit) {
+internal fun GlassTabBar(selected: Tab, onSelect: (Tab) -> Unit) {
     val c = Glass.colors
     Row(
         Modifier
@@ -176,6 +176,8 @@ private fun GlassTabBar(selected: Tab, onSelect: (Tab) -> Unit) {
             .padding(horizontal = 12.dp, vertical = 10.dp)
             .fillMaxWidth()
             .glassSurface(RoundedCornerShape(30.dp), elevation = 12.dp)
+            // Verre plus dense que les cartes : le texte qui défile dessous reste lisible.
+            .background(c.backgroundTop.copy(alpha = 0.78f))
             .padding(6.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

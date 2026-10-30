@@ -26,6 +26,13 @@ Couverture des tests unitaires :
 - `RecordingCapabilityTest` : **le rôle Téléphone seul ne suffit pas**, conditions exactes de prise en charge, désactivation après un essai réel en échec, message exact « Enregistrement des appels non pris en charge sur cet appareil. ».
 - `RecordingNamesTest` : nommage, **protection contre les chemins** lors du renommage, durée de conservation.
 
+## Captures d'écran (rendu réel, sans appareil)
+
+`./gradlew :app:recordRoborazziDebug` exécute `FeatureScreenshotsTest`. Ce test rend les vrais écrans Compose
+sur un Pixel 7 simulé (Robolectric, Android 15) dans `app/build/outputs/roborazzi/`, avec 18 captures,
+une par fonctionnalité. Les données et l'état des rôles sont des exemples injectés. Ces captures montrent
+l'interface ; elles ne remplacent pas les tests sur appareil ci-dessous.
+
 ## 2. Tests sur appareil (à exécuter — non réalisés à ce jour)
 
 Aucun appareil n'était disponible et l'environnement de développement ne dispose pas de KVM (émulateur inutilisable) : les tests ci-dessous **n'ont pas encore été exécutés**.

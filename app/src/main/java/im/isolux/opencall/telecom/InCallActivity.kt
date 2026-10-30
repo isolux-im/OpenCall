@@ -140,7 +140,7 @@ class InCallActivity : ComponentActivity() {
 }
 
 @Composable
-private fun InCallScreen(calls: List<CallUi>, primary: CallUi?, audio: CallAudioState?) {
+internal fun InCallScreen(calls: List<CallUi>, primary: CallUi?, audio: CallAudioState?) {
     val c = Glass.colors
     val context = LocalContext.current
     var showPad by remember { mutableStateOf(false) }

@@ -39,7 +39,8 @@ import im.isolux.opencall.ui.theme.Glass
 @Composable
 fun LockSettings(refreshKey: Int, onMessage: (String) -> Unit) {
     val context = LocalContext.current
-    val activity = context as FragmentActivity
+    // BiometricPrompt exige une FragmentActivity (MainActivity en est une).
+    val activity = context as? FragmentActivity
     val c = Glass.colors
     val prefs = AppPrefs.get(context)
     val availability = remember(refreshKey) { AppLockManager.availability(context) }
@@ -61,7 +62,7 @@ fun LockSettings(refreshKey: Int, onMessage: (String) -> Unit) {
                 enabled = availability == LockAvailability.AVAILABLE,
             ) { wanted ->
                 AppLockManager.authenticate(
-                    activity,
+                    activity ?: return@SwitchRow,
                     title = if (wanted) "Activer le verrouillage" else "Désactiver le verrouillage",
                     subtitle = "Confirmez votre identité",
                     onSuccess = {
