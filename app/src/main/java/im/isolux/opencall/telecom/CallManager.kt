@@ -77,7 +77,8 @@ object CallManager {
                 call = call,
                 state = call.stateCompat,
                 number = details?.handle?.schemeSpecificPart,
-                displayName = details?.contactDisplayName?.takeIf { it.isNotBlank() }
+                displayName = (if (android.os.Build.VERSION.SDK_INT >= 30) details?.contactDisplayName else null)
+                    ?.takeIf { it.isNotBlank() }
                     ?: details?.callerDisplayName?.takeIf { it.isNotBlank() },
                 connectTimeMillis = details?.connectTimeMillis ?: 0L,
                 canHold = details?.can(Call.Details.CAPABILITY_HOLD) == true,

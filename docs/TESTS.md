@@ -9,9 +9,13 @@ Commande : `./gradlew :core:test :app:lintDebug :app:assembleDebug`
 
 | Vérification | Résultat |
 |---|---|
-| Compilation de l'application (Kotlin, Compose) et génération de l'APK debug | ✅ |
+| Compilation (SDK Android officiel : plateforme 35, build-tools 34.0.0) et génération de l'APK debug | ✅ |
 | Android Lint (dont `NewApi` pour minSdk 29) | ✅ 0 erreur |
 | Tests unitaires `:core` (27 tests) | ✅ 27/27 |
+
+Le lint avec le SDK officiel a détecté deux incompatibilités Android 10 (API 29), corrigées :
+`Call.Details.getContactDisplayName()` (API 30) et le type de service de premier plan
+`microphone` (API 30).
 
 Couverture des tests unitaires :
 
@@ -22,13 +26,9 @@ Couverture des tests unitaires :
 - `RecordingCapabilityTest` : **le rôle Téléphone seul ne suffit pas**, conditions exactes de prise en charge, désactivation après un essai réel en échec, message exact « Enregistrement des appels non pris en charge sur cet appareil. ».
 - `RecordingNamesTest` : nommage, **protection contre les chemins** lors du renommage, durée de conservation.
 
-> Limite de l'environnement de développement : le SDK Android officiel n'était pas téléchargeable ;
-> la compilation locale a utilisé les classes du framework Android 15 publiées par Robolectric.
-> Le workflow GitHub Actions refait la même vérification avec le SDK officiel.
-
 ## 2. Tests sur appareil (à exécuter — non réalisés à ce jour)
 
-Aucun appareil ni émulateur n'était disponible : les tests ci-dessous **n'ont pas encore été exécutés**.
+Aucun appareil n'était disponible et l'environnement de développement ne dispose pas de KVM (émulateur inutilisable) : les tests ci-dessous **n'ont pas encore été exécutés**.
 Tant qu'ils ne le sont pas, les fonctions correspondantes ne doivent pas être considérées comme validées.
 
 | # | Test | Procédure | Résultat attendu | Statut |

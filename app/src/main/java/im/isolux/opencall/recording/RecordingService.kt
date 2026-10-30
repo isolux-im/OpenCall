@@ -65,7 +65,11 @@ class RecordingService : Service() {
             )
             .build()
         try {
-            startForeground(CallNotifications.ID_RECORDING, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                startForeground(CallNotifications.ID_RECORDING, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
+            } else {
+                startForeground(CallNotifications.ID_RECORDING, notification)
+            }
         } catch (e: RuntimeException) {
             fail("Android a refusé l'accès au microphone en arrière-plan.", markDevice = false)
             return
