@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OpenCall</string>
+    <string name="screening_service_label">Filtrage des appels OpenCall</string>
+    <string name="incall_label">Appel en cours</string>
+</resources>

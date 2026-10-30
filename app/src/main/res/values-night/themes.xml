@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.OpenCall" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/glass_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="Theme.OpenCall.InCall" parent="Theme.OpenCall" />
+</resources>
