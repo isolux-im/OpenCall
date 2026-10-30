@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.telecom.Call
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -51,13 +52,14 @@ object CallNotifications {
             (android.os.Build.VERSION.SDK_INT < 33 ||
                 context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
 
-    fun show(context: Context, call: CallUi?) {
+    /** Affiche ou retire la notification d'appel. Renvoie `false` si elle n'a pas pu être affichée. */
+    fun show(context: Context, call: CallUi?): Boolean {
         val nm = NotificationManagerCompat.from(context)
         if (call == null || call.state == Call.STATE_DISCONNECTED) {
             nm.cancel(ID_CALL)
-            return
+            return true
         }
-        if (!canPost(context)) return
+        if (!canPost(context)) return false
         val name = call.displayName ?: call.number?.let { PhoneNumbers.format(it) } ?: "Numéro masqué"
         val person = Person.Builder().setName(name).setImportant(true).build()
         val content = PendingIntent.getActivity(
@@ -91,13 +93,21 @@ object CallNotifications {
                 .setContentIntent(content)
                 .setUsesChronometer(call.connectTimeMillis > 0)
                 .setWhen(if (call.connectTimeMillis > 0) call.connectTimeMillis else System.currentTimeMillis())
-                .setStyle(NotificationCompat.CallStyle.forOngoingCall(person, hangUp))
+                // Pas de CallStyle ici : Android 12+ le refuse (IllegalArgumentException) hors service
+                // de premier plan ou intention plein écran, ce qui faisait planter l'application.
+                .addAction(R.drawable.ic_notification_call, "Raccrocher", hangUp)
                 .build()
         }
-        try {
+        return try {
             nm.notify(ID_CALL, notification)
+            true
         } catch (e: SecurityException) {
-            // Permission retirée entre-temps : l'écran d'appel reste accessible via InCallActivity.
+            // Permission de notification retirée : l'appelant ouvre l'écran d'appel.
+            false
+        } catch (e: IllegalArgumentException) {
+            // Notification refusée par le système : l'appelant ouvre l'écran d'appel.
+            Log.w("OpenCallNotifications", "Notification d'appel refusée", e)
+            false
         }
     }
 }

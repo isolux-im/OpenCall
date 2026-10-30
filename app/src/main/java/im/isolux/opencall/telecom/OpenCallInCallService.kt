@@ -28,7 +28,9 @@ class OpenCallInCallService : InCallService() {
         observer = scope.launch {
             CallManager.calls.collect { calls ->
                 val primary = CallManager.primaryCall()
-                CallNotifications.show(this@OpenCallInCallService, primary)
+                val posted = CallNotifications.show(this@OpenCallInCallService, primary)
+                // Sans notification plein écran, un appel entrant doit quand même afficher l'écran d'appel.
+                if (!posted && primary?.state == Call.STATE_RINGING) openInCallScreen()
                 CallRecorder.onCallsChanged(this@OpenCallInCallService, calls)
             }
         }
@@ -40,12 +42,14 @@ class OpenCallInCallService : InCallService() {
         val ringing = call.stateCompat == Call.STATE_RINGING
         // Appel sortant (utilisateur au premier plan) ou appel entrant sans notification possible :
         // on ouvre directement l'écran d'appel.
-        if (!ringing || !CallNotifications.canPost(this)) {
-            try {
-                startActivity(InCallActivity.intent(this))
-            } catch (e: RuntimeException) {
-                // Lancement en arrière-plan refusé : la notification plein écran prend le relais.
-            }
+        if (!ringing || !CallNotifications.canPost(this)) openInCallScreen()
+    }
+
+    private fun openInCallScreen() {
+        try {
+            startActivity(InCallActivity.intent(this))
+        } catch (e: RuntimeException) {
+            // Lancement en arrière-plan refusé : la notification d'appel reste le point d'entrée.
         }
     }
 
